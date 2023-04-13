@@ -1,0 +1,16 @@
+{
+    "name": "blanks/framework",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Blanks\\Framework\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Rendisaputra33",
+            "email": "gorengmbah@gmail.com"
+        }
+    ],
+    "require": {}
+}
