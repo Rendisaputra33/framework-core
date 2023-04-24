@@ -31,7 +31,7 @@ class Router
         }
 
         if (is_array($currentRoute['callback'])) {
-            $instance = $this->createInstanceController($currentRoute['callback'][0], $currentRoute['callback'][1]);
+            $instance = $this->createInstanceController(...$currentRoute['callback']);
             call_user_func_array($instance, [$this->request, ...$currentRoute['parameters']]);
         }
 

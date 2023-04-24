@@ -28,16 +28,38 @@ trait RegisteringRoute
         return $this->add('POST', $path, $callback);
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param string $path
+     * @param Closure|array $callback
+     * @return self
+     */
     public function put(string $path, Closure|array $callback): self
     {
         return $this->add('PUT', $path, $callback);
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param string $path
+     * @param Closure|array $callback
+     * @return self
+     */
     public function delete(string $path, Closure|array $callback): self
     {
         return $this->add('DELETE', $path, $callback);
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param string $method
+     * @param string $path
+     * @param Closure|array $callback
+     * @return self
+     */
     private function add(string $method, string $path, Closure|array $callback): self
     {
         $pattern = "/\{([\w\s]+)\}/";
