@@ -23,7 +23,8 @@ abstract class Model
         $primaryKey = $this->primaryKey;
 
         $statement = $connection->prepare("SELECT * FROM $table WHERE $primaryKey = :id");
-        $statement->bindParam('id', $id);
+        $statement->bindParam(':id', $id);
+        $statement->execute();
         $result = $statement->fetch(PDO::FETCH_OBJ);
         Manager::close();
         return $result;
@@ -64,6 +65,7 @@ abstract class Model
         foreach ($filter as $key => $value)
             $statement->bindParam(":$key", $value);
 
+        $statement->execute();
         $result = $statement->fetchAll(PDO::FETCH_OBJ);
         Manager::close();
         return $result;
@@ -77,7 +79,7 @@ abstract class Model
         foreach ($binding as $key => $value) {
             $statement->bindParam(":$key", $value);
         }
-
+        $statement->execute();
         if ($isSingle) return $statement->fetch(PDO::FETCH_OBJ);
         return $statement->fetchAll(PDO::FETCH_OBJ);
     }
