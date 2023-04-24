@@ -18,7 +18,22 @@ abstract class Controller
 
     protected function redirect(string $path): void
     {
-        http_response_code(303);
-        header("Location: $path");
+        header("Location: $path", true, 301);
+        exit();
+    }
+
+    protected function json(int $code = 200, array $data)
+    {
+        // remove any string that could create an invalid JSON 
+        // such as PHP Notice, Warning, logs...
+        ob_clean();
+
+        // this will clean up any previously added headers, to start clean
+        header_remove();
+
+        // Set the content type to JSON and charset 
+        // (charset can be set to something else)
+        header("Content-type: application/json; charset=utf-8", true, $code);
+        echo json_encode($data);
     }
 }

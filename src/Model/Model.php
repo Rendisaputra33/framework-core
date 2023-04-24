@@ -24,7 +24,7 @@ abstract class Model
 
         $statement = $connection->prepare("SELECT * FROM $table WHERE $primaryKey = :id");
         $statement->bindParam('id', $id);
-        $result = $statement->fetchObject();
+        $result = $statement->fetch(PDO::FETCH_OBJ);
         Manager::close();
         return $result;
     }
@@ -67,6 +67,19 @@ abstract class Model
         $result = $statement->fetchAll(PDO::FETCH_OBJ);
         Manager::close();
         return $result;
+    }
+
+    public function query(string $query, array $binding = [], bool $isSingle = false)
+    {
+        $connection = Manager::create();
+        $statement = $connection->prepare($query);
+
+        foreach ($binding as $key => $value) {
+            $statement->bindParam(":$key", $value);
+        }
+
+        if ($isSingle) return $statement->fetch(PDO::FETCH_OBJ);
+        return $statement->fetchAll(PDO::FETCH_OBJ);
     }
 
     public static function __callStatic($name, $arguments)
