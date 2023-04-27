@@ -39,4 +39,15 @@ class Request
         $object->map($body);
         return $object;
     }
+
+    public function hasFile()
+    {
+        return !empty($_FILES);
+    }
+
+    public function file(string $name): array
+    {
+        var_dump($_FILES[$name]);
+        return [];
+    }
 }

@@ -4,7 +4,10 @@
     "autoload": {
         "psr-4": {
             "Blanks\\Framework\\": "src/"
-        }
+        },
+        "files": [
+            "./src/Helper/index.php"
+        ]
     },
     "authors": [
         {

@@ -6,13 +6,6 @@ use PDO;
 
 class Manager
 {
-    private const CONFIG = [
-        'host' => 'localhost',
-        'username' => 'root',
-        'password' => 'root',
-        'database' => 'food_delivery'
-    ];
-
     private static ?PDO $connection = null;
 
     /**
@@ -21,10 +14,10 @@ class Manager
      */
     public static function create(): ?PDO
     {
-        $host = self::CONFIG['host'];
-        $database = self::CONFIG['database'];
-        $username = self::CONFIG['username'];
-        $password = self::CONFIG['password'];
+        $host = env('DB_HOST');
+        $database = env('DB_SELECTED');
+        $username = env('DB_USERNAME');
+        $password = env('DB_PASSWORD');
 
         $connection = new PDO(
             "mysql:host=$host;dbname=$database",
