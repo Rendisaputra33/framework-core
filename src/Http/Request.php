@@ -50,15 +50,15 @@ class Request
     /**
      * @return FileUploader[] 
      */
-    public function file(string $name): array
+    public function files(string $name): array
     {
-        if ($this->hasFile()) return [];
+        if (!$this->hasFile()) return [];
         if (!isset($_FILES[$name])) return [];
         if(!is_array($_FILES[$name]['name'])) return [FileUploaderFactory::create($_FILES[$name])];
         return $this->mapFile($_FILES[$name]);
     }
 
-    public function mapFile(array $files): array
+    private function mapFile(array $files): array
     {
         $mapped = [];
         foreach ($files as $key => $value) {

@@ -11,6 +11,7 @@ use PDO;
  * @method mixed find(string|int $id)
  * @method bool update(array $data, array $filter)
  * @method array get(array $select, array $filter)
+ * @method array|object query(string $query, array $binding = [], bool $isSingle = false)
  */
 abstract class Model
 {

@@ -5,8 +5,8 @@ namespace Blanks\Framework\Http;
 class FileUploader
 {
     private $destinationPath;
-    private $extensions;
-    private $maxSize;
+    private $extensions = array('jpeg', 'jpg', 'png', 'jfif', 'svg');
+    private $maxSize = 10000;
     private $uploadName;
     private $file;
 
@@ -28,12 +28,17 @@ class FileUploader
         return $this;
     }
 
-    public function save(string $dir): bool 
+    public function save(string $dir): bool|string
     {
-        if (empty($files)) return false;
+        if (empty($this->file)) return false;
         $size   =   $this->file["size"];
-        $name   =   md5($this->file["name"]);
+        $name   =   $this->file["name"];
         $ext    =   pathinfo($name,PATHINFO_EXTENSION);
+        $name   =   md5($name);
+
+        if (!file_exists("{$this->destinationPath}/$dir")) {
+            mkdir("{$this->destinationPath}/$dir", 0777, true);
+        }
 
         if (!in_array($ext, $this->extensions)) return false;
         if ($size > $this->maxSize) return false;
@@ -43,8 +48,8 @@ class FileUploader
             "{$this->destinationPath}/$dir/$name.$ext"
         );
 
-        $this->uploadName = "$name.$ext";
-        return $status;
+        $this->uploadName = "/$dir/$name.$ext";
+        return $status ? $this->uploadName : false;
     }
 
     public function deleteUploaded()
