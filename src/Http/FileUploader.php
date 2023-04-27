@@ -41,7 +41,7 @@ class FileUploader
         }
 
         if (!in_array($ext, $this->extensions)) return false;
-        if ($size > $this->maxSize) return false;
+        if (($size/1000) > $this->maxSize) return false;
 
         $status = move_uploaded_file(
             $this->file['tmp_name'],

@@ -22,7 +22,7 @@ class Response
      */
     public function view(string $name, array $data = []): self
     {
-        extract($data, EXTR_PREFIX_SAME);
+        extract($data, EXTR_PREFIX_SAME, "view");
         require_once Application::$ROOT . "/views/$name.php";
         return $this;
     }
