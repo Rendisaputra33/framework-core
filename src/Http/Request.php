@@ -2,6 +2,8 @@
 
 namespace Blanks\Framework\Http;
 
+use Blanks\Framework\Factory\FileUploaderFactory;
+
 class Request
 {
     public function getPath(): string
@@ -45,9 +47,25 @@ class Request
         return !empty($_FILES);
     }
 
+    /**
+     * @return FileUploader[] 
+     */
     public function file(string $name): array
     {
-        var_dump($_FILES[$name]);
-        return [];
+        if ($this->hasFile()) return [];
+        if (!isset($_FILES[$name])) return [];
+        if(!is_array($_FILES[$name]['name'])) return [FileUploaderFactory::create($_FILES[$name])];
+        return $this->mapFile($_FILES[$name]);
+    }
+
+    public function mapFile(array $files): array
+    {
+        $mapped = [];
+        foreach ($files as $key => $value) {
+            foreach ($value as $index => $value) {
+                $mapped[$index][$key] = $value;
+            }
+        }
+        return array_map(fn($it) => FileUploaderFactory::create($it), $mapped);
     }
 }
