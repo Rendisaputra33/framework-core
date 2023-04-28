@@ -20,11 +20,21 @@ class Response
     /**
      * returned view has declared
      */
-    public function view(string $name, array $data = []): self
+    public function view(View $view, array $data = []): string
     {
-        extract($data, EXTR_PREFIX_SAME, "view");
-        require_once Application::$ROOT . "/views/$name.php";
-        return $this;
+        extract($data, EXTR_PREFIX_SAME, "model");
+        $content = $this->render($view->getContent());
+        ob_start();
+        require_once Application::$ROOT . "/views/template/{$view->getTemplate()}.php";
+        $template = ob_get_clean();
+        return str_replace('{{content}}', $content, $template);
+    }
+
+    private function render(string $content): string
+    {
+        ob_start();
+        require_once Application::$ROOT . "/views/{$content}.php";
+        return ob_get_clean();
     }
 
     /**

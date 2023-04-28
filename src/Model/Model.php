@@ -36,7 +36,7 @@ abstract class Model
         $connection = Manager::create();
         $table = $this->table;
         $keys = join(",", array_keys($data));
-        $valuesBinding = join(",", array_map(fn ($it) => ":$it", array_values($data)));
+        $valuesBinding = join(",", array_map(fn ($it) => ":$it", array_keys($data)));
         $statement = $connection->prepare("INSERT INTO $table ($keys) VALUES ($valuesBinding)");
         $result = $statement->execute($data);
         Manager::close();
