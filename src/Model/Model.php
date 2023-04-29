@@ -72,7 +72,7 @@ abstract class Model
         return $result;
     }
 
-    public function query(string $query, array $binding = [], bool $isSingle = false)
+    private function query(string $query, array $binding = [], bool $isSingle = false)
     {
         $connection = Manager::create();
         $statement = $connection->prepare($query);
