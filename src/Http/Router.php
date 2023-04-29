@@ -32,11 +32,13 @@ class Router
 
         if (is_array($currentRoute['callback'])) {
             $instance = $this->createInstanceController(...$currentRoute['callback']);
-            call_user_func_array($instance, [$this->request, ...$currentRoute['parameters']]);
+            $result = call_user_func_array($instance, [$this->request, ...$currentRoute['parameters']]);
+            if (is_string($result)) echo $result;
         }
 
         if ($currentRoute['callback'] instanceof \Closure) {
-            call_user_func($currentRoute['callback'], $this->request, ...$currentRoute['parameters']);
+            $result = call_user_func($currentRoute['callback'], $this->request, ...$currentRoute['parameters']);
+            if (is_string($result)) echo $result;
         }
     }
 

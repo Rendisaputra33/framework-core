@@ -49,12 +49,11 @@ class Response
     /**
      * returned json response
      */
-    public function json(array $data): self
+    public function json(array $data): string
     {
         ob_clean();
         header_remove();
         header("Content-type: application/json; charset=utf-8", true, $this->code);
-        echo json_encode($data);
-        return $this;
+        return json_encode($data);
     }
 }
