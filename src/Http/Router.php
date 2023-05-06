@@ -8,6 +8,8 @@ class Router
 
     private array $routes = [];
 
+    private string $prefix = '';
+
     private Request $request;
 
     /**

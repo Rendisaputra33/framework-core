@@ -23,18 +23,20 @@ class Response
     public function view(View $view, array $data = []): string
     {
         extract($data, EXTR_PREFIX_SAME, "model");
-        $content = $this->render($view->getContent());
+        // get content
         ob_start();
-        require_once Application::$ROOT . "/views/template/{$view->getTemplate()}.php";
-        $template = ob_get_clean();
-        return str_replace('{{content}}', $content, $template);
-    }
+        require_once Application::$ROOT . "/views/{$view->getContent()}.php";
+        $content = ob_get_clean();
+        // get template
 
-    private function render(string $content): string
-    {
-        ob_start();
-        require_once Application::$ROOT . "/views/{$content}.php";
-        return ob_get_clean();
+        if (!is_null($view->getTemplate())) {
+            ob_start();
+            require_once Application::$ROOT . "/views/template/{$view->getTemplate()}.php";
+            $template = ob_get_clean();
+            return str_replace('{{content}}', $content, $template);
+        }
+
+        return $content;
     }
 
     /**

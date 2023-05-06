@@ -29,8 +29,7 @@ trait RegisteringRoute
     }
 
     /**
-     * Undocumented function
-     *
+     * registering route with put method
      * @param string $path
      * @param Closure|array $callback
      * @return self
@@ -41,8 +40,7 @@ trait RegisteringRoute
     }
 
     /**
-     * Undocumented function
-     *
+     * registering route with delete method
      * @param string $path
      * @param Closure|array $callback
      * @return self
@@ -50,6 +48,21 @@ trait RegisteringRoute
     public function delete(string $path, Closure|array $callback): self
     {
         return $this->add('DELETE', $path, $callback);
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param string $prefix
+     * @param Closure $callback
+     * @return self
+     */
+    public function group(string $prefix, Closure $callback): self
+    {
+        $this->prefix = $prefix;
+        $callback();
+        $this->prefix = '';
+        return $this;
     }
 
     /**
@@ -63,7 +76,8 @@ trait RegisteringRoute
     private function add(string $method, string $path, Closure|array $callback): self
     {
         $pattern = "/\{([\w\s]+)\}/";
-        $realPath = preg_replace($pattern, "([a-zA-Z0-9]*)", $path);
+        $concatedPath = $this->prefix . (($path == '/' && !empty($this->prefix)) ? '' : $path);
+        $realPath = preg_replace($pattern, "([a-zA-Z0-9]*)", $concatedPath);
         $this->routes[$method][] = [
             'path' => $realPath,
             'callback' => $callback

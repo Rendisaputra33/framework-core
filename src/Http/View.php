@@ -4,20 +4,29 @@ namespace Blanks\Framework\Http;
 
 class View
 {
+    private string $content;
+    private ?string $template;
+
     public function __construct(
-        private string $content,
-        private string $template
-    ) {}
+        string $content,
+        ?string $template = null
+    ) {
+        $this->setContent($content);
+        $this->setTemplate($template);
+    }
 
     public function setContent(string $name)
     {
-        $this->content = $name;
+        $this->content = $this->trimFormat($name);
         return $this;
     }
 
-    public function setTemplate(string $template)
+    public function setTemplate(?string $template)
     {
-        $this->template = $template;
+        $this->template = is_null($template) 
+            ? $template 
+            : $this->trimFormat($template);
+
         return $this;
     }
 
@@ -29,5 +38,10 @@ class View
     public function getTemplate()
     {
         return $this->template;
+    }
+
+    private function trimFormat(string $path)
+    {
+        return str_replace(".", "/", $path);
     }
 }

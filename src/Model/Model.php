@@ -12,6 +12,7 @@ use PDO;
  * @method bool update(array $data, array $filter)
  * @method array get(array $select, array $filter)
  * @method array|object query(string $query, array $binding = [], bool $isSingle = false)
+ * @method bool executeQuery(string $query, array $binding = [])
  */
 abstract class Model
 {
@@ -80,9 +81,27 @@ abstract class Model
         foreach ($binding as $key => $value) {
             $statement->bindParam(":$key", $value);
         }
+
         $statement->execute();
-        if ($isSingle) return $statement->fetch(PDO::FETCH_OBJ);
-        return $statement->fetchAll(PDO::FETCH_OBJ);
+        $result = $isSingle 
+            ? $statement->fetch(PDO::FETCH_OBJ)
+            : $statement->fetchAll(PDO::FETCH_OBJ);
+
+        Manager::close();
+        return $result;
+    }
+
+    private function executeQuery(string $query, array $binding = [])
+    {
+        $connection = Manager::create();
+        $statement = $connection->prepare($query);
+
+        foreach ($binding as $key => $value) {
+            $statement->bindParam(":$key", $value);
+        }
+        $result = $statement->execute();
+        Manager::close();
+        return $result;
     }
 
     public static function __callStatic($name, $arguments)
