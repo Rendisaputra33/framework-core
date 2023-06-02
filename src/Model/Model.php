@@ -62,7 +62,8 @@ abstract class Model
         $table = $this->table;
         $keys = join(",", $select);
         $buildFilter = join(" AND ", array_map(fn ($it) => "$it = :$it", array_keys($filter)));
-        $statement = $connection->prepare("SELECT $keys FROM $table WHERE $buildFilter");
+        $buildFilter = empty($buildFilter) ? "" : "WHERE " . $buildFilter;
+        $statement = $connection->prepare("SELECT $keys FROM $table $buildFilter");
 
         foreach ($filter as $key => $value)
             $statement->bindParam(":$key", $value);

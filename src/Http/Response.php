@@ -51,7 +51,7 @@ class Response
     /**
      * returned json response
      */
-    public function json(array $data): string
+    public function json(mixed $data): string
     {
         ob_clean();
         header_remove();
