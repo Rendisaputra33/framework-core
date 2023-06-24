@@ -7,16 +7,25 @@ use Exception;
 use PDO;
 
 /**
+ * @static bool insert(array $data)
+ * @static mixed find(string|int $id)
+ * @static bool update(array $data, array $filter)
+ * @static array get(array $select, array $filter)
+ * @static array|object query(string $query, array $binding = [], bool $isSingle = false)
+ * @static bool executeQuery(string $query, array $binding = [])
+ * @static Model with(array $relations)
  * @method bool insert(array $data)
  * @method mixed find(string|int $id)
  * @method bool update(array $data, array $filter)
  * @method array get(array $select, array $filter)
  * @method array|object query(string $query, array $binding = [], bool $isSingle = false)
  * @method bool executeQuery(string $query, array $binding = [])
+ * @method Model with(array $relations)
  */
 abstract class Model
 {
     protected string $table, $primaryKey;
+    protected array $relations = [];
 
     private function find(mixed $id)
     {
@@ -90,6 +99,63 @@ abstract class Model
 
         Manager::close();
         return $result;
+    }
+
+    private function findByKey(string $key, string $value): mixed {
+        $connection = Manager::create();
+        $table = $this->table;
+
+        $statement = $connection->prepare("SELECT * FROM $table WHERE $key = :key");
+        $statement->bindParam(':key', $value);
+        $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_OBJ);
+        Manager::close();
+        return $result;
+    }
+
+    private function with(array $relations): self {
+        $this->relations = $relations;
+        return $this;
+    }
+
+    public function single(int|string $id): mixed {
+        $dataParent = $this->find($id);
+
+        foreach ($this->relations as [
+            'name' => $name,
+            'model' => $model,
+            'key' => ['local' => $local, 'foreign' => $foreign],
+            'cardinality' => $cardinality
+        ]) {
+            if ($cardinality == 'HasMany') {
+                $dataParent->{$name} = $model::get(['*'], [$foreign => $dataParent->{$local}]);
+            } else {
+                $dataParent->{$name} = $model::findByKey($foreign, $dataParent->$local);
+            }
+        }
+
+        return $dataParent;
+    }
+
+    public function all(array $select = ['*'], array $filter = []): mixed {
+        $dataParent = $this->get($select, $filter);
+
+        foreach ($dataParent as &$data) {
+            foreach ($this->relations as [
+                'name' => $name,
+                'model' => $model,
+                'key' => ['local' => $local, 'foreign' => $foreign],
+                'cardinality' => $cardinality
+            ]) {
+                if ($cardinality == 'HasMany') {
+                    $data->{$name} = $model::get(['*'], [$foreign => $data->{$local}]);
+                } else {
+                    $data->{$name} = $model::findByKey($foreign, $data->$local);
+                }
+            }
+        }
+
+        return $dataParent;
     }
 
     private function executeQuery(string $query, array $binding = [])
