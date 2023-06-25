@@ -125,12 +125,23 @@ abstract class Model
             'name' => $name,
             'model' => $model,
             'key' => ['local' => $local, 'foreign' => $foreign],
+            'load' => $load,
             'cardinality' => $cardinality
         ]) {
+            /** @var Model $entity */
+            $entity = new $model();
             if ($cardinality == 'HasMany') {
-                $dataParent->{$name} = $model::get(['*'], [$foreign => $dataParent->{$local}]);
+                if (empty($load)) {
+                    $dataParent->{$name} = $entity->get(['*'], [$foreign => $dataParent->{$local}]);
+                } else {
+                    $dataParent->{$name} = $entity->with($load)->all(filter: [$foreign => $dataParent->{$local}]);
+                }
             } else {
-                $dataParent->{$name} = $model::findByKey($foreign, $dataParent->$local);
+                if (empty($load)) {
+                    $dataParent->{$name} = $entity->get(['*'], [$foreign => $dataParent->{$local}]);
+                } else {
+                    $dataParent->{$name} = $entity->with($load)->findByKey($foreign, $dataParent->$local);
+                }
             }
         }
 
@@ -145,12 +156,24 @@ abstract class Model
                 'name' => $name,
                 'model' => $model,
                 'key' => ['local' => $local, 'foreign' => $foreign],
+                'load' => $load,
                 'cardinality' => $cardinality
             ]) {
+
+                /** @var Model $entity */
+                $entity = new $model();
                 if ($cardinality == 'HasMany') {
-                    $data->{$name} = $model::get(['*'], [$foreign => $data->{$local}]);
+                    if (empty($load)) {
+                        $data->{$name} = $entity->get(['*'], [$foreign => $data->{$local}]);
+                    } else {
+                        $data->{$name} = $entity->with($load)->all(filter: [$foreign => $data->{$local}]);
+                    }
                 } else {
-                    $data->{$name} = $model::findByKey($foreign, $data->$local);
+                    if (empty($load)) {
+                        $data->{$name} = $entity->findByKey($foreign, $data->$local);
+                    } else {
+                        $data->{$name} = $entity->with($load)->findByKey($foreign, $data->$local);
+                    }
                 }
             }
         }
