@@ -9,7 +9,7 @@ abstract class Entity
     public function map(array $data): void
     {
         foreach ($this->mapping() as $key => $value) {
-            $this->{$value} = $data[$key];
+            $this->{$value} = $data[$key] ?? null;
         }
     }
 }

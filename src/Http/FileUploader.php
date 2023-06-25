@@ -48,7 +48,7 @@ class FileUploader
             "{$this->destinationPath}/$dir/$name.$ext"
         );
 
-        $this->uploadName = "/$dir/$name.$ext";
+        $this->uploadName = "/uploads/$dir/$name.$ext";
         return $status ? $this->uploadName : false;
     }
 

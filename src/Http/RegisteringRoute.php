@@ -77,7 +77,7 @@ trait RegisteringRoute
     {
         $pattern = "/\{([\w\s]+)\}/";
         $concatedPath = $this->prefix . (($path == '/' && !empty($this->prefix)) ? '' : $path);
-        $realPath = preg_replace($pattern, "([a-zA-Z0-9]*)", $concatedPath);
+        $realPath = preg_replace($pattern, "([a-zA-Z0-9@\-_]+)", $concatedPath);
         $this->routes[$method][] = [
             'path' => $realPath,
             'callback' => $callback
